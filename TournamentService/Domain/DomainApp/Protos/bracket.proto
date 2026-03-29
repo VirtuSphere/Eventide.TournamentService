@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package bracket.v1;
+option csharp_namespace = "DomainApp.Grpc.Bracket";
+
+service BracketService {
+  rpc CreateBracket (CreateBracketRequest) returns (CreateBracketReply);
+  rpc GetBracket (GetBracketRequest) returns (GetBracketReply);
+}
+
+message CreateBracketRequest {
+  string tournament_id = 1;
+  string format = 2;
+  uint32 max_teams = 3;
+}
+
+message CreateBracketReply {
+  string bracket_id = 1;
+}
+
+message GetBracketRequest {
+  string bracket_id = 1;
+}
+
+message GetBracketReply {
+  string bracket_id = 1;
+  string status = 2;
+}
