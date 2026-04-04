@@ -1,0 +1,3 @@
+[submodule "contracts/Eventide.Contracts"]
+	path = contracts/Eventide.Contracts
+	url = https://github.com/VirtuSphere/Eventide.Contracts.git

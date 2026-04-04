@@ -16,10 +16,10 @@ public class Tournament : Entity<Guid>
     public DateTime StartDate { get; private set; }
     public DateTime EndDate { get; private set; }
     public Status Status { get; private set; }
-    public TournamentFormat TournamentFormat { get; private set; } = null!;
+    public TournamentFormat TournamentFormat { get; private set; }
     public MaxTeams MaxTeams { get; private set; } = null!;
     public Money PrizePool { get; private set; } = null!;
-    public BracketId? BracketId { get; private set; }
+    public BracketId? BracketId { get; private set; } = null;
 
     
     protected Tournament() 
@@ -43,7 +43,7 @@ public class Tournament : Entity<Guid>
         StartDate = startDate;
         EndDate = endDate;
         Status = status;
-        TournamentFormat = tournamentFormat ?? throw new TournamentFormatNullException();
+        TournamentFormat = tournamentFormat;
         MaxTeams = maxTeams ?? throw new MaxTeamsNullException();
         PrizePool = prizePool ?? throw new PrizePoolNullException();
         BracketId = bracketId;
@@ -78,7 +78,7 @@ public class Tournament : Entity<Guid>
         StartDate = startDate;
         EndDate = endDate;
         Status = status;
-        TournamentFormat = tournamentFormat ?? throw new TournamentFormatNullException();
+        TournamentFormat = tournamentFormat;
         MaxTeams = maxTeams ?? throw new MaxTeamsNullException();
         PrizePool = prizePool ?? throw new PrizePoolNullException();
         BracketId = bracketId;

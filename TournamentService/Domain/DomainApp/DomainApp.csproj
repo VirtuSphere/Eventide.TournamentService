@@ -21,6 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="Protos\bracket.proto" GrpcServices="Client" />
+    <Protobuf Include="..\..\..\contracts\Eventide.Contracts\Protos\bracket.proto"
+              GrpcServices="Client"
+              Link="Protos\bracket.proto" />
   </ItemGroup>
 </Project>

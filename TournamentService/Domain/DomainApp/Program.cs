@@ -13,11 +13,11 @@ public class Program
             DateTime.UtcNow,
             DateTime.UtcNow.AddDays(7),
             Status.Draft,
-            new TournamentFormat("local"),
+            TournamentFormat.SINGLE_ELIMINATION,
             new MaxTeams(16),
             new Money(12333),
             bracketId: null);
-        org.
+
         foreach (var tournament in org.Tournaments)
         {
             var bracketState = tournament.BracketId?.ToString() ?? "PENDING_FROM_BRACKET_SERVICE";
