@@ -12,6 +12,7 @@ namespace TournamentService.Domain;
 public class Tournament : Entity<Guid>
 {
     public TournamentName TournamentName { get; private set; } = null!;
+    public Guid OrganizerId { get; private set; }
     public Game Game { get; private set; } = null!;
     public DateTime StartDate { get; private set; }
     public DateTime EndDate { get; private set; }
@@ -25,7 +26,7 @@ public class Tournament : Entity<Guid>
     protected Tournament() 
     {
     }
-    public Tournament(Guid id, 
+    public Tournament(Guid id, Guid organizerId, 
         TournamentName tournamentName,
         Game game, 
         DateTime startDate, 
@@ -40,6 +41,7 @@ public class Tournament : Entity<Guid>
 
         TournamentName = tournamentName ?? throw new TournamentNameNullException();
         Game = game ?? throw new TournamentNameNullException(); ;
+        OrganizerId = organizerId;
         StartDate = startDate;
         EndDate = endDate;
         Status = status;
@@ -49,6 +51,7 @@ public class Tournament : Entity<Guid>
         BracketId = bracketId;
     }
     public bool Update(
+        Guid organizerId,
         TournamentName tournamentName,
         Game game,
         DateTime startDate,
@@ -61,6 +64,7 @@ public class Tournament : Entity<Guid>
     {
         if (TournamentName == tournamentName &&
             Game == game &&
+            OrganizerId == organizerId &&
             StartDate == startDate &&
             EndDate == endDate &&
             Status == status &&
@@ -75,6 +79,7 @@ public class Tournament : Entity<Guid>
 
         TournamentName = tournamentName ?? throw new TournamentNameNullException();
         Game = game;
+        OrganizerId = organizerId;
         StartDate = startDate;
         EndDate = endDate;
         Status = status;
@@ -118,6 +123,6 @@ public class Tournament : Entity<Guid>
     
     public override string ToString()
     {
-        return $"Tournament: {TournamentName}, Game: {Game}, StartDate: {StartDate}, EndDate: {EndDate}, Status: {Status}, TournamentFormat: {TournamentFormat}, MaxTeams: {MaxTeams}, PrizePool: {PrizePool}, BracketId: {BracketId}";
+        return $"Tournament: {TournamentName}, Game: {Game}, StartDate: {StartDate}, EndDate: {EndDate}, Status: {Status}, TournamentFormat: {TournamentFormat}, MaxTeams: {MaxTeams}, PrizePool: {PrizePool}, BracketId: {BracketId}, OrganizerId: {OrganizerId}";
     }
 }

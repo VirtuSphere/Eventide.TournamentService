@@ -7,7 +7,7 @@ public class Program
     public static void Main(string[] args)
     {
         var org = new Organizer(Guid.NewGuid(), new UserName("John Doe"));
-        org.CreateTournament(
+        var tue = org.CreateTournament(
             new TournamentName("Summer Cup"),
             new Game("Dota"),
             DateTime.UtcNow,
@@ -17,7 +17,7 @@ public class Program
             new MaxTeams(16),
             new Money(12333),
             bracketId: null);
-
+        org.RemoveTournament(tue);
         foreach (var tournament in org.Tournaments)
         {
             var bracketState = tournament.BracketId?.ToString() ?? "PENDING_FROM_BRACKET_SERVICE";

@@ -19,13 +19,6 @@ public class Organizer : Entity<Guid>
     {
         UserName = userName ?? throw new OrganizerUserNameNullException();
     }
-    public bool ChangeUserName(UserName userName)
-    {
-        if (userName == null) throw new OrganizerUserNameNullException();
-        if (UserName == userName) return false;
-        UserName = userName;
-        return true;
-    }
     public Tournament CreateTournament(TournamentName tournamentName,
         Game game,
         DateTime startDate,
@@ -36,7 +29,7 @@ public class Organizer : Entity<Guid>
         Money prizePool,
         BracketId? bracketId)
     {
-        var tournament = new Tournament(Guid.NewGuid(), tournamentName, game, startDate, endDate, status, tournamentFormat, maxTeams, prizePool, bracketId);
+        var tournament = new Tournament(Guid.NewGuid(), Id, tournamentName, game, startDate, endDate, status, tournamentFormat, maxTeams, prizePool, bracketId);
         _tournaments.Add(tournament);
         return tournament;
     }
@@ -53,7 +46,7 @@ public class Organizer : Entity<Guid>
     {
         if (tournament == null) throw new TournamentNullException();
         if (!_tournaments.Contains(tournament)) return false;
-        tournament.Update(tournamentName, game, startDate, endDate, status, tournamentFormat, maxTeams, prizePool, bracketId);
+        tournament.Update(Id, tournamentName, game, startDate, endDate, status, tournamentFormat, maxTeams, prizePool, bracketId);
         return true;
     }
 
