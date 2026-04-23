@@ -15,10 +15,12 @@ public class TournamentDbContext : DbContext
         {
             builder.HasKey(t => t.Id);
             builder.Property(t => t.Name).IsRequired().HasMaxLength(100);
+            builder.Property(t => t.Description).IsRequired(false).HasMaxLength(500);
             builder.Property(t => t.Game).IsRequired().HasMaxLength(50);
             builder.Property(t => t.Format).HasConversion<string>().IsRequired();
             builder.Property(t => t.Status).HasConversion<string>().IsRequired();
             builder.HasIndex(t => t.OrganizerId);
+            builder.Ignore(t => t.ParticipantIds);
         });
     }
 }
