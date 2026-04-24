@@ -12,7 +12,7 @@ public class TournamentRepository : ITournamentRepository
     public TournamentRepository(TournamentDbContext context) => _context = context;
 
     public async Task<Tournament?> GetByIdAsync(Guid id, CancellationToken ct)
-        => await _context.Tournaments.FindAsync(new object[] { id }, ct);
+        => await _context.Tournaments.FirstOrDefaultAsync(t => t.Id == id, ct);
 
     public async Task<List<Tournament>> GetUpcomingAsync(int skip, int take, CancellationToken ct)
         => await _context.Tournaments
@@ -29,8 +29,12 @@ public class TournamentRepository : ITournamentRepository
     public async Task AddAsync(Tournament tournament, CancellationToken ct)
         => await _context.Tournaments.AddAsync(tournament, ct);
 
-    public Task UpdateAsync(Tournament tournament, CancellationToken ct)
-    { _context.Tournaments.Update(tournament); return Task.CompletedTask; }
+    public async Task UpdateAsync(Tournament tournament, CancellationToken ct)
+    {
+        _context.Entry(tournament).State = EntityState.Modified;
+        _context.Entry(tournament).Property(x => x.ParticipantIds).IsModified = true;
+    }
 
-    public async Task SaveChangesAsync(CancellationToken ct) => await _context.SaveChangesAsync(ct);
+    public async Task SaveChangesAsync(CancellationToken ct)
+        => await _context.SaveChangesAsync(ct);
 }

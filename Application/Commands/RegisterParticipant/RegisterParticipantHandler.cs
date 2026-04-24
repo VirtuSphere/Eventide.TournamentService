@@ -1,4 +1,5 @@
 using Eventide.TournamentService.Application.Common;
+using Eventide.TournamentService.Domain.Exceptions;
 using Eventide.TournamentService.Domain.Interfaces;
 using MediatR;
 
@@ -15,8 +16,16 @@ public class RegisterParticipantHandler : IRequestHandler<RegisterParticipantCom
         var tournament = await _repo.GetByIdAsync(req.TournamentId, ct);
         if (tournament is null) return Result.Failure("Tournament not found");
 
-        tournament.RegisterParticipant(req.UserId);
-        await _repo.SaveChangesAsync(ct);
-        return Result.Success();
+        try
+        {
+            tournament.RegisterParticipant(req.UserId);
+            await _repo.UpdateAsync(tournament, ct);
+            await _repo.SaveChangesAsync(ct);
+            return Result.Success();
+        }
+        catch (DomainException ex)
+        {
+            return Result.Failure(ex.Message);
+        }
     }
 }

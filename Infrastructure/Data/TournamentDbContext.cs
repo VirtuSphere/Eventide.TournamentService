@@ -1,5 +1,6 @@
 using Eventide.TournamentService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace Eventide.TournamentService.Infrastructure.Data;
 
@@ -20,7 +21,13 @@ public class TournamentDbContext : DbContext
             builder.Property(t => t.Format).HasConversion<string>().IsRequired();
             builder.Property(t => t.Status).HasConversion<string>().IsRequired();
             builder.HasIndex(t => t.OrganizerId);
-            builder.Ignore(t => t.ParticipantIds);
+            
+            builder.Property(t => t.ParticipantIds)
+                .HasColumnType("jsonb")
+                .HasConversion(
+                    v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
+                    v => JsonSerializer.Deserialize<List<Guid>>(v, (JsonSerializerOptions)null) ?? new List<Guid>()
+                );
         });
     }
 }
