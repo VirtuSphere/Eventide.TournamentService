@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TournamentService.Domain.Base;
+﻿using TournamentService.Domain.Base;
 using TournamentService.Domain.Enumes;
 using TournamentService.Domain.Exceptions;
 using TournamentService.ValueObjects;
@@ -12,93 +7,133 @@ namespace TournamentService.Domain;
 public class Tournament : Entity<Guid>
 {
     public TournamentName TournamentName { get; private set; } = null!;
-    public Guid OrganizerId { get; private set; }
+    public Organizer Organizer { get; private set; } = null!;
     public Game Game { get; private set; } = null!;
     public DateTime StartDate { get; private set; }
     public DateTime EndDate { get; private set; }
-    public Status Status { get; private set; }
+    public TournamentStatus Status { get; private set; }
     public TournamentFormat TournamentFormat { get; private set; }
     public MaxTeams MaxTeams { get; private set; } = null!;
     public Money PrizePool { get; private set; } = null!;
-    public BracketId? BracketId { get; private set; } = null;
+    public Bracket Bracket { get; private set; } = null!;
+    public RegisteredTeamsCount RegisteredTeamsCount { get; private set; } = null!;
 
     
     protected Tournament() 
     {
     }
-    public Tournament(Guid id, Guid organizerId, 
-        TournamentName tournamentName,
-        Game game, 
-        DateTime startDate, 
-        DateTime endDate, 
-        Status status, 
-        TournamentFormat tournamentFormat, 
-        MaxTeams maxTeams, 
-        Money prizePool, 
-        BracketId? bracketId) : base(id)
-    {
-        ValidateDates(startDate, endDate);
 
-        TournamentName = tournamentName ?? throw new TournamentNameNullException();
-        Game = game ?? throw new TournamentNameNullException(); ;
-        OrganizerId = organizerId;
-        StartDate = startDate;
-        EndDate = endDate;
-        Status = status;
-        TournamentFormat = tournamentFormat;
-        MaxTeams = maxTeams ?? throw new MaxTeamsNullException();
-        PrizePool = prizePool ?? throw new PrizePoolNullException();
-        BracketId = bracketId;
-    }
-    public bool Update(
-        Guid organizerId,
+    public Tournament(Organizer organizer,
         TournamentName tournamentName,
         Game game,
         DateTime startDate,
         DateTime endDate,
-        Status status,
         TournamentFormat tournamentFormat,
         MaxTeams maxTeams,
         Money prizePool,
-        BracketId? bracketId)
+        Bracket bracketId)
+        : this(Guid.NewGuid(), organizer, tournamentName, game, startDate, endDate, TournamentStatus.Draft, tournamentFormat, maxTeams, prizePool, bracketId)
+    {
+    }
+
+    protected Tournament(Guid id, Organizer organizer,
+        TournamentName tournamentName,
+        Game game,
+        DateTime startDate,
+        DateTime endDate,
+        TournamentStatus status,
+        TournamentFormat tournamentFormat,
+        MaxTeams maxTeams,
+        Money prizePool,
+        Bracket bracket) : base(id)
+    {
+        Organizer = organizer ?? throw new ArgumentNullValueException(nameof(organizer));
+        TournamentName = tournamentName ?? throw new ArgumentNullValueException(nameof(tournamentName));
+        Game = game ?? throw new ArgumentNullValueException(nameof(game));
+        StartDate = startDate;
+        EndDate = endDate;
+        Status = status;
+        TournamentFormat = tournamentFormat;
+        MaxTeams = maxTeams ?? throw new ArgumentNullValueException(nameof(maxTeams));
+        PrizePool = prizePool ?? throw new ArgumentNullValueException(nameof(prizePool));
+        Bracket= bracket ?? throw new ArgumentNullValueException(nameof(bracket));
+        RegisteredTeamsCount = new RegisteredTeamsCount(0);
+
+        ValidateDates(this, startDate, endDate);
+    }
+    public bool Update(
+        TournamentName tournamentName,
+        Game game,
+        DateTime startDate,
+        DateTime endDate,
+        TournamentStatus status,
+        TournamentFormat tournamentFormat,
+        MaxTeams maxTeams,
+        Money prizePool,
+        Bracket bracket)
     {
         if (TournamentName == tournamentName &&
             Game == game &&
-            OrganizerId == organizerId &&
             StartDate == startDate &&
             EndDate == endDate &&
             Status == status &&
             TournamentFormat == tournamentFormat &&
             MaxTeams == maxTeams &&
             PrizePool == prizePool &&
-            BracketId == bracketId)
+            Bracket == bracket)
             return false;
 
-        ValidateDates(startDate, endDate);
-        ValidateStatusTransition(Status, status);
+        ValidateDates(this, startDate, endDate);
+        ValidateStatusTransition(this, Status, status);
 
-        TournamentName = tournamentName ?? throw new TournamentNameNullException();
-        Game = game;
-        OrganizerId = organizerId;
+        TournamentName = tournamentName ?? throw new ArgumentNullValueException(nameof(tournamentName));
+        Game = game ?? throw new ArgumentNullValueException(nameof(game));
         StartDate = startDate;
         EndDate = endDate;
         Status = status;
         TournamentFormat = tournamentFormat;
-        MaxTeams = maxTeams ?? throw new MaxTeamsNullException();
-        PrizePool = prizePool ?? throw new PrizePoolNullException();
-        BracketId = bracketId;
+        MaxTeams = maxTeams ?? throw new ArgumentNullValueException(nameof(maxTeams));
+        PrizePool = prizePool ?? throw new ArgumentNullValueException(nameof(prizePool));
+        Bracket = bracket ?? throw new ArgumentNullValueException(nameof(bracket));
         return true;
     }
 
-    private static void ValidateDates(DateTime startDate, DateTime endDate)
+    public bool RegisterTeam()
+    {
+        if (Status != TournamentStatus.RegistrationOpen)
+        {
+            return false;
+        }
+
+        if (RegisteredTeamsCount.Value >= MaxTeams.Value)
+        {
+            return false;
+        }
+
+        RegisteredTeamsCount = RegisteredTeamsCount.Increment();
+        return true;
+    }
+
+    public bool UnregisterTeam()
+    {
+        if (RegisteredTeamsCount.Value == 0)
+        {
+            return false;
+        }
+
+        RegisteredTeamsCount = RegisteredTeamsCount.Decrement();
+        return true;
+    }
+
+    private static void ValidateDates(Tournament tournament, DateTime startDate, DateTime endDate)
     {
         if (startDate > endDate)
         {
-            throw new TournamentDateRangeInvalidException(startDate, endDate);
+            throw new TournamentDateRangeInvalidException(tournament, startDate, endDate);
         }
     }
 
-    private static void ValidateStatusTransition(Status currentStatus, Status nextStatus)
+    private static void ValidateStatusTransition(Tournament tournament, TournamentStatus currentStatus, TournamentStatus nextStatus)
     {
         if (currentStatus == nextStatus)
         {
@@ -107,22 +142,28 @@ public class Tournament : Entity<Guid>
 
         var isValidTransition = currentStatus switch
         {
-            Status.Draft => nextStatus is Status.RegistrationOpen,
-            Status.RegistrationOpen => nextStatus is Status.RegistrationClosed,
-            Status.RegistrationClosed => nextStatus is Status.InProgress,
-            Status.InProgress => nextStatus is Status.Completed,
-            Status.Completed => false,
+            TournamentStatus.Draft => nextStatus is TournamentStatus.RegistrationOpen,
+            TournamentStatus.RegistrationOpen => nextStatus is TournamentStatus.RegistrationClosed,
+            TournamentStatus.RegistrationClosed => nextStatus is TournamentStatus.InProgress,
+            TournamentStatus.InProgress => nextStatus is TournamentStatus.Completed,
+            TournamentStatus.Completed => false,
             _ => false
         };
 
         if (!isValidTransition)
         {
-            throw new TournamentStatusTransitionInvalidException(currentStatus, nextStatus);
+            throw new TournamentStatusTransitionInvalidException(tournament, currentStatus, nextStatus);
         }
     }
     
     public override string ToString()
     {
-        return $"Tournament: {TournamentName}, Game: {Game}, StartDate: {StartDate}, EndDate: {EndDate}, Status: {Status}, TournamentFormat: {TournamentFormat}, MaxTeams: {MaxTeams}, PrizePool: {PrizePool}, BracketId: {BracketId}, OrganizerId: {OrganizerId}";
+        return $"Tournament: {TournamentName}, Game: {Game}, StartDate: {StartDate}, EndDate: {EndDate}, Status: {Status}, TournamentFormat: {TournamentFormat}, MaxTeams: {MaxTeams}, PrizePool: {PrizePool}, RegisteredTeamsCount: {RegisteredTeamsCount.Value}, BracketId: {Bracket.Id}, OrganizerId: {Organizer.Id}";
+    }
+    public bool CanBeCancelled(DateTime now)
+    {
+        return Status == TournamentStatus.Draft &&
+               RegisteredTeamsCount.Value == 0 &&
+               StartDate - now >= TimeSpan.FromDays(7);
     }
 }

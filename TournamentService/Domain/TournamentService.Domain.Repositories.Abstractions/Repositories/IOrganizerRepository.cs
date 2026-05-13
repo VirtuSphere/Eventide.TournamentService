@@ -6,7 +6,6 @@ namespace TournamentService.Domain.Repositories.Abstractions.Repositories;
 
 public interface IOrganizerRepository : IRepository<Organizer, Guid>
 {
-    Task<Organizer?> GetByUserNameAsync(
-        UserName userName,
-        CancellationToken cancellationToken = default);
+    Task<Organizer?> GetOrganizerByUsernameAsync(UserName username, CancellationToken cancellationToken);
 }
+

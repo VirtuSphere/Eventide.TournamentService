@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 
 namespace TournamentService.Domain.Base;
 
@@ -21,6 +17,25 @@ public abstract class Entity<TId>(TId id) where TId : struct, IEquatable<TId>
     /// Gets the ID of the entity.
     /// </summary>
     public TId Id { get; } = id;
+
+    public override bool Equals(object? obj)
+    {
+        return obj is Entity<TId> other &&
+               GetType() == other.GetType() &&
+               Id.Equals(other.Id);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(GetType(), Id);
+    }
+
+    public static bool operator ==(Entity<TId>? left, Entity<TId>? right)
+        => Equals(left, right);
+
+    public static bool operator !=(Entity<TId>? left, Entity<TId>? right)
+        => !(left == right);
+
     /// <summary>
     /// Protected constructor for entity framework if needed.
     /// </summary>

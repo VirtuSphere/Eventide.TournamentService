@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace TournamentService.Domain.Enumes;
 
-namespace TournamentService.Domain.Enumes;
-
-public enum Status
+public enum TournamentStatus
 {
     Draft ,
     RegistrationOpen , 
