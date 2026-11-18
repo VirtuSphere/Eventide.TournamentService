@@ -1,0 +1,47 @@
+name: .NET build and tests
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore
+        run: dotnet restore TournamentService/TournamentService.sln
+
+      - name: Build
+        run: dotnet build TournamentService/TournamentService.sln --configuration Release --no-restore
+
+      - name: Test with 80% line coverage
+        run: >
+          dotnet test TournamentService/TournamentService.Tests/TournamentService.Tests.csproj
+          --configuration Release
+          --no-build
+          --no-restore
+          /p:CollectCoverage=true
+          /p:CoverletOutput=TournamentService/TournamentService.Tests/TestResults/coverage/
+          /p:CoverletOutputFormat=cobertura
+          /p:Threshold=80
+          /p:ThresholdType=line
+          /p:ThresholdStat=total
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: TournamentService/TournamentService.Tests/TestResults/coverage/coverage.cobertura.xml

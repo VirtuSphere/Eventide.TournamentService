@@ -64,6 +64,11 @@ public class Organizer : Entity<Guid>
         if (!tournament.CanBeCancelled(DateTime.UtcNow)) return false;
         return _tournaments.Remove(tournament);
     }
+
+    public void ChangeUserName(UserName userName)
+    {
+        UserName = userName ?? throw new ArgumentNullValueException(nameof(userName));
+    }
     
 
 }

@@ -1,0 +1,26 @@
+@baseUrl = http://localhost:5281
+
+### Get all organizers
+GET {{baseUrl}}/api/organizers
+
+### Get organizer by id
+GET {{baseUrl}}/api/organizers/00000000-0000-0000-0000-000000000000
+
+### Create organizer
+POST {{baseUrl}}/api/organizers
+Content-Type: application/json
+
+{
+  "userName": "organizer-1"
+}
+
+### Update organizer
+PUT {{baseUrl}}/api/organizers/00000000-0000-0000-0000-000000000000
+Content-Type: application/json
+
+{
+  "userName": "organizer-updated"
+}
+
+### Delete organizer
+DELETE {{baseUrl}}/api/organizers/00000000-0000-0000-0000-000000000000

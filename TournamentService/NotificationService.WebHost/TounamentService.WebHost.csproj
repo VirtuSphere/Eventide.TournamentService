@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TournamentService.Infrastructure.EntityFramework\TournamentService.Infrastructure.EntityFramework.csproj" />
+    <ProjectReference Include="..\TournamentService.Application.Services\TournamentService.Application.Services.csproj" />
   </ItemGroup>
 
 </Project>

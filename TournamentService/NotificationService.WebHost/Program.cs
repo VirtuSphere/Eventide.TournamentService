@@ -1,7 +1,12 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using TournamentService.Application.Services;
+using TournamentService.Application.Services.Abstractions;
+using TournamentService.Application.Services.Mapping;
+using TournamentService.Domain.Repositories.Abstractions.Repositories;
 using TournamentService.Infrastructure.EntityFramework;
+using TournamentService.Infrastructure.EntityFramework.RepositoriesEF;
 using TournamentService.WebHost.Helpers;
 
 
@@ -38,10 +43,13 @@ builder.Services.AddDbContext<ApplicationDbContext>(
         options.UseNpgsql(connectionString);
     });
 
+builder.Services.AddAutoMapper(configuration => configuration.AddProfile<ApplicationProfile>());
+builder.Services.AddScoped<IOrganizerRepository, OrganizerRepository>();
+builder.Services.AddScoped<IOrganizerApplicationService, OrganizerApplicationService>();
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 
 var app = builder.Build();
