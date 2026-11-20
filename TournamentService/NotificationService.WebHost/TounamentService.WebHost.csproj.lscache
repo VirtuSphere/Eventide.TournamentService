@@ -81,14 +81,10 @@ Microsoft.NETCore.App.Ref
  TournamentService.Application.Services/obj/Debug/net8.0/ref/TournamentService.Application.Services.dll
  TournamentService.Infrastructure.EntityFramework/obj/Debug/net8.0/ref/TournamentService.Infrastructure.EntityFramework.dll
 <NUGET>/
- automapper/15.1.0/lib/net8.0/AutoMapper.dll
+ automapper/14.0.0/lib/net8.0/AutoMapper.dll
  microsoft.entityframeworkcore.abstractions/8.0.8/lib/net8.0/Microsoft.EntityFrameworkCore.Abstractions.dll
  microsoft.entityframeworkcore.relational/8.0.8/lib/net8.0/Microsoft.EntityFrameworkCore.Relational.dll
  microsoft.entityframeworkcore/8.0.8/lib/net8.0/Microsoft.EntityFrameworkCore.dll
- microsoft.identitymodel.abstractions/8.14.0/lib/net8.0/Microsoft.IdentityModel.Abstractions.dll
- microsoft.identitymodel.jsonwebtokens/8.14.0/lib/net8.0/Microsoft.IdentityModel.JsonWebTokens.dll
- microsoft.identitymodel.logging/8.14.0/lib/net8.0/Microsoft.IdentityModel.Logging.dll
- microsoft.identitymodel.tokens/8.14.0/lib/net8.0/Microsoft.IdentityModel.Tokens.dll
  microsoft.openapi/1.6.14/lib/netstandard2.0/Microsoft.OpenApi.dll
  npgsql.entityframeworkcore.postgresql/8.0.8/lib/net8.0/Npgsql.EntityFrameworkCore.PostgreSQL.dll
  npgsql/8.0.4/lib/net8.0/Npgsql.dll
